@@ -1,0 +1,66 @@
+Quick sort z mediano:	
+	Naključna zaporedja dolžine:
+	- 10 000: 21 001μs
+	- 20 000: 43 840μs
+	- 30 000: 82 359μs
+	- 40 000: 94 337μs
+	- 50 000: 118 848μs
+	Naraščujoča zaporedja dolžine (predvidena časovna zahtevnost - O(log n)):
+	- 10 000: 10 252μs
+	- 20 000: 19 726μs
+	- 30 000: 30 630μs
+	- 40 000: 42 645μs
+	- 50 000: 55 785μs
+
+	Ugotovitve:
+	- čas urejenja naraščajočega zaporedja je precej manjši in tudi bolj konstanten.
+
+Quick sort brez mediane:
+	Naključna zaporedja dolžine:
+	- 500: 692μs 
+	- 1000: 2391μs
+	- 1500: 2299μs
+	- 2000: 4203μs
+	- 2500:	4931μs
+	Naraščujoča zaporedja dolžine (predvidena časovna zahtevnost - O(log n)):
+	- 500: 6532μs
+	- 1000: 23 301μs
+	- 1500: 48 652μs
+	- 2000: 85 274μs
+	- 2500:	131 410μs
+	Padajoča zaporedja dolžine:
+	- 500: 6582μs 
+	- 1000: 22 782μs
+	- 1500: 49 490μs
+	- 2000: 106 725μs
+	- 2500:	156 042μs
+
+	Ugotovitve:
+	- pri sortiranju brez mediane je čas sortiranja naključnega zaporedja mnogo manjši kakor čas sortiranja naraščujočega.   
+	- obnašanje quick sorta brez mediane je pri padajočem in naraščujočem zaporedju podobno.
+
+Sortiranje z izbiranjem:
+	Naključna zaporedja dolžine:
+	- 10 000: 4 686 759μs
+	- 20 000: 17 369 089μs
+	- 30 000: 41 753 191μs
+	- 40 000: 73 056 705μs
+	- 50 000: 112 875 615μs
+	Naraščujoča zaporedja dolžine:
+	- 10 000: 4 442 786μs
+	- 20 000: 18 600 634μs
+	- 30 000: 41 436 504μs
+	- 40 000: 71 684 767μs
+	- 50 000: 112 742 566μs
+
+	Ugotovitve:
+	- pri sortiranju z izbiranjem je čas urejanja naključnega in naraščujočega zaporedja skoraj enak.
+
+- Pri quick sortu (brez mediane) 1 000 000 elementov traja urejanje predolgo (več kot 1min ...).	
+- Če znotraj funkcije QuickSort() definiramo dodatno polje double x[10000] in določimo x[0]=0, pride do
+preobremenitve sklada (Stack Overflow) in program se zruši. Pri tem, da če urejamo majše število elementov (npr. 10), 
+se program še vedno izvede. Menim, da do tega pride, ker se vsakič ob klicanju funkcije QuickSort po nepotrebnem
+ustvari tabela 10 000 elementov in se del prostora na skladu zasede, zato pri urejanju večjega števila elementov pride 
+do prekinitve.
+- Quick sort z mediano je ugodnejši za sortiranje naraščajočih zaporedij, medtem ko QS brez mediane je hitrejši pri 
+sortiranju naključnih zaporedij.
