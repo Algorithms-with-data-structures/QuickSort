@@ -1,258 +1,220 @@
-﻿#include <iostream>
-#include <time.h>
+﻿// QUICK SORT
+
+#include <iostream>
 #include <vector>
+#include <ctime>
 #include <chrono>
+#include <algorithm>
 using namespace std;
 
+// Display menu options
 void menu() {
-	cout << endl;
-	cout << "Quick sort - izbira:" << endl;
-	cout << endl;
-	cout << "1) Generiraj nakljucno zaporedje" << endl;
-	cout << "2) Generiraj narascujoce zaporedje" << endl;
-	cout << "3) Generiraj padajoce zaporedje" << endl;
-	cout << "4) Izpis zaporedja" << endl;
-	cout << "5) Preveri ali je zaporedje urejeno" << endl;
-	cout << "6) Hitro urejanje brez mediane" << endl;
-	cout << "7) Hitro urejanje z mediano" << endl;
-	cout << "8) Uredi z izbiranjem" << endl;
-	cout << "9) Konec" << endl;
-	cout << endl;
-	cout << "Izbira: ";
+    cout << endl;
+    cout << "Quick Sort - Options:" << endl;
+    cout << endl;
+    cout << "1) Generate a random sequence" << endl;
+    cout << "2) Generate an ascending sequence" << endl;
+    cout << "3) Generate a descending sequence" << endl;
+    cout << "4) Display the sequence" << endl;
+    cout << "5) Check if the sequence is sorted" << endl;
+    cout << "6) Quick Sort without median" << endl;
+    cout << "7) Quick Sort with median" << endl;
+    cout << "8) Selection Sort" << endl;
+    cout << "9) Exit" << endl;
+    cout << endl;
+    cout << "Choice: ";
 }
 
+// Generate a given type sequence
+void generateSequence(vector<int>& arr, unsigned int size, unsigned int& upperBound, string type) {
+    arr.clear();
 
-void generateRandom(vector<int>& tab, unsigned int N, unsigned int& vrh) {
-	if (tab.size() != NULL) {
-		tab.clear();
-	}
+    if (type == "random") {
+        for (int i = 0; i < size; i++) arr.push_back(rand() % size + 1);
+    }
+    else if (type == "ascending") {
+        for (int i = 0; i < size; i++) arr.push_back(i + 1);
+    }
+    else if (type == "descending") {
+        for (int i = size; i > 0; i--) arr.push_back(i);
+    }
 
-	for (int i = 0; i < N; i++) {
-		tab.push_back(rand() % N + 1);
-	}
-
-	vrh = tab.size() - 1;
+    upperBound = arr.size() - 1;
 }
 
-
-void generateAscending(vector<int>& tab, unsigned int N, unsigned int& vrh) {
-	if (tab.size() != NULL) {
-		tab.clear();
-	}
-
-	for (int i = 0; i < N; i++) {
-		tab.push_back(i + 1);
-	}
-
-	vrh = N - 1;
+// Display the sequence
+void print(const vector<int>& arr) {
+    for (const auto& num : arr) {
+        cout << num << " ";
+    }
+    cout << endl;
 }
 
-
-void generateDescending(vector<int>& tab, unsigned int N, unsigned int& vrh) {
-	if (tab.size() != NULL) {
-		tab.clear();
-	}
-
-	for (int i = N; i > 0; i--) {
-		tab.push_back(i);
-	}
-
-	vrh = N - 1;
+// Check if the sequence is sorted
+bool isSorted(const vector<int>& arr) {
+    return is_sorted(arr.begin(), arr.end());
 }
 
+// Partition function for Quick Sort
+int partition(vector<int>& arr, int low, int high) {
+    int pivot = arr[low];
+    int left = low;
+    int right = high;
 
-void print(vector<int>tab) {
-	for (int i = 0; i < tab.size(); i++) {
-		cout << tab[i] << " ";
-	}
+    while (left < right) {
+        while (arr[left] <= pivot && left < high) left++;
+        while (arr[right] >= pivot && right > low) right--;
+        if (left < right) swap(arr[left], arr[right]);
+    }
+
+    swap(arr[low], arr[right]);
+    return right;
 }
 
-
-bool isSorted(vector <int> tab) {
-	bool sorted = false;
-
-	for (int i = 1; i < tab.size(); i++) {
-		if (tab[i] >= tab[i - 1]) {
-			sorted = true;
-		}
-		else {
-			return false;
-		}
-			
-	}
-
-	return sorted;
+// Quick Sort without median
+void QuickSort(vector<int>& arr, int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(arr, low, high);
+        QuickSort(arr, low, pivotIndex - 1);
+        QuickSort(arr, pivotIndex + 1, high);
+    }
 }
 
+// Partition function with median
+int partitionWithMedian(vector<int>& arr, int low, int high) {
+    int medianIndex = low + (high - low) / 2;
+    swap(arr[low], arr[medianIndex]);
 
-int deli(vector <int>& tab, int& dno, int& vrh) {
-	int fixed = tab[dno];
-	int l = dno;
-	int d = vrh;
-
-	while (l < d) {
-		while (tab[l] <= fixed && l < vrh)
-			l++;
-		while (tab[d] >= fixed && d > dno)
-			d--;
-
-		if (l < d)
-			std::swap(tab[l], tab[d]);
-	}
-
-	std::swap(tab[dno], tab[d]);
-	return d;
+    return partition(arr, low, high);
 }
 
-void QuickSort(vector <int>& tab, int dno, int vrh) {
-	int j;
-	if (dno < vrh) {
-		j = deli(tab, dno, vrh);
-		QuickSort(tab, dno, j-1);
-		QuickSort(tab, j+1, vrh);
-	}
+// Quick Sort with median
+void QuickSortWithMedian(vector<int>& arr, int low, int high) {
+    if (low < high) {
+        int pivotIndex = partitionWithMedian(arr, low, high);
+        QuickSortWithMedian(arr, low, pivotIndex - 1);
+        QuickSortWithMedian(arr, pivotIndex + 1, high);
+    }
 }
 
-
-int deliWithMediana(vector <int>& tab, int& dno, int& vrh) {
-	int med = dno + (vrh - dno) / 2;
-	std::swap(tab[dno], tab[med]);
-
-	int fixed = tab[dno];
-	int l = dno;
-	int d = vrh;
-
-	while (l < d) {
-		while (tab[l] <= fixed && l < vrh)
-			l++;
-		while (tab[d] >= fixed && d > dno)
-			d--;
-
-		if (l < d)
-			std::swap(tab[l], tab[d]);
-	}
-		
-	std::swap(tab[dno], tab[d]);
-	return d;
+// Selection Sort
+void SelectionSort(vector<int>& arr, int size) {
+    for (int i = 0; i < size - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < size; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        if (minIndex != i) {
+            swap(arr[i], arr[minIndex]);
+        }
+    }
 }
-
-void QuickSortWithMediana(vector <int>& tab, int dno, int vrh) {
-	int j;
-	if (dno < vrh) {
-		j = deliWithMediana(tab, dno, vrh);
-		QuickSortWithMediana(tab, dno, j - 1);
-		QuickSortWithMediana(tab, j + 1, vrh);
-	}
-
-}
-
-
-void SelectionSort(vector <int>& tab, int N) {
-	int minIndex;
-	for (int i = 0; i < N - 1; i++) {
-		minIndex = i;
-		for (int j = i + 1; j < N; j++) {
-			if (tab[j] < tab[minIndex])
-				minIndex = j;
-		}
-		if (minIndex != i)
-			std::swap(tab[i], tab[minIndex]);
-	}
-}
-
 
 int main() {
-	bool running = true;
-	int izbira;
+    bool running = true;
+    int choice;
 
-	unsigned int N;
-	vector<int> tab;
-	unsigned int dno = 0;
-	unsigned int vrh = 0;
+    unsigned int size;
+    vector<int> arr;
+    unsigned int lowerBound = 0;
+    unsigned int upperBound = 0;
 
-	srand(time(nullptr));
-	do {
-		cout << endl;
-		menu();
-		cin >> izbira;
-		switch (izbira) {
-		case 1:
-			cout << "Dolzina nakljucnega zaporedja: ";
-			cin >> N;
-			generateRandom(tab, N, vrh);
-			break;
+    srand(time(nullptr));
 
-		case 2:
-			cout << "Dolzina narascujocega zaporedja: ";
-			cin >> N;
-			generateAscending(tab, N, vrh);
-			break;
+    do {
+        menu();
+        cin >> choice;
+        system("cls");
+        switch (choice) {
+        case 1: // Generate random sequence
+            cout << "Length of random sequence: ";
+            cin >> size;
+            generateSequence(arr, size, upperBound, "random");
+            break;
 
-		case 3:
-			cout << "Dolzina padajocega zaporedja: ";
-			cin >> N;
-			generateDescending(tab, N, vrh);
-			break;
+        case 2: // Generate ascending sequence
+            cout << "Length of ascending sequence: ";
+            cin >> size;
+            generateSequence(arr, size, upperBound, "ascending");
+            break;
 
-		case 4:
-			if (dno == vrh)
-				cout << "Zaporedje je prazno!" << endl;
-			else
-				print(tab);
-			break;
+        case 3: // Generate descending sequence
+            cout << "Length of descending sequence: ";
+            cin >> size;
+            generateSequence(arr, size, upperBound, "descending");
+            break;
 
-		case 5:
-			if (isSorted(tab)) {
-				cout << "Zaporedje je urejeno." << endl;
-			}
-			else {
-				cout << "Zaporedje ni urejeno." << endl;
-			}
-			break;
+        case 4: // Display sequence
+            if (arr.empty()) {
+                cout << "The sequence is empty!" << endl;
+            }
+            else {
+                print(arr);
+            }
+            break;
 
-		case 6:
-			if (dno == vrh)
-				cout << "Zaporedje je prazno!" << endl;
-			else {
-				auto start = std::chrono::steady_clock::now();
-				QuickSort(tab, dno, vrh);
-				auto end = std::chrono::steady_clock::now();
-				cout << "Cas sortiranja: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "μs." << endl;
-			}
+        case 5: // Check if sorted
+            if (isSorted(arr)) {
+                cout << "The sequence is sorted." << endl;
+            }
+            else {
+                cout << "The sequence is not sorted." << endl;
+            }
+            break;
 
-			break;
+        case 6: // Quick Sort without median
+            if (arr.empty()) {
+                cout << "The sequence is empty. Please generate a sequence first!" << endl;
+            }
+            else {
+                auto start = chrono::steady_clock::now();
+                QuickSort(arr, lowerBound, upperBound);
+                auto end = chrono::steady_clock::now();
+                cout << "Sorting time: "
+                    << chrono::duration_cast<chrono::microseconds>(end - start).count()
+                    << "μs." << endl;
+            }
+            break;
 
-		case 7:
-			if (dno == vrh)
-				cout << "Zaporedje je prazno!" << endl;
-			else {
-				auto start = std::chrono::steady_clock::now();
-				QuickSortWithMediana(tab, dno, vrh);
-				auto end = std::chrono::steady_clock::now();
-				cout << "Cas sortiranja: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "μs." << endl;
-			}
-			break;
+        case 7: // Quick Sort with median
+            if (arr.empty()) {
+                cout << "The sequence is empty. Please generate a sequence first!" << endl;
+            }
+            else {
+                auto start = chrono::steady_clock::now();
+                QuickSortWithMedian(arr, lowerBound, upperBound);
+                auto end = chrono::steady_clock::now();
+                cout << "Sorting time: "
+                    << chrono::duration_cast<chrono::microseconds>(end - start).count()
+                    << "μs." << endl;
+            }
+            break;
 
-		case 8:
-			if (dno == vrh)
-				cout << "Zaporedje je prazno!" << endl;
-			else {
-				auto start = std::chrono::steady_clock::now();
-				SelectionSort(tab, N);
-				auto end = std::chrono::steady_clock::now();
-				cout << "Cas sortiranja: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "μs." << endl;
-			}
-			break;
+        case 8: // Selection Sort
+            if (arr.empty()) {
+                cout << "The sequence is empty. Please generate a sequence first!" << endl;
+            }
+            else {
+                auto start = chrono::steady_clock::now();
+                SelectionSort(arr, size);
+                auto end = chrono::steady_clock::now();
+                cout << "Sorting time: "
+                    << chrono::duration_cast<chrono::microseconds>(end - start).count()
+                    << "μs." << endl;
+            }
+            break;
 
-		case 9:
-			running = false;
-			break;
+        case 9: // Exit
+            running = false;
+            break;
 
-		default:
-			cout << "Narobe izbira!" << endl;
-			break;
-		}
-	} while (running);
+        default:
+            cout << "Invalid choice!" << endl;
+            break;
+        }
+    } while (running);
 
-	return 0;
+    return 0;
 }
